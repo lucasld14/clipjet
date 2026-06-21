@@ -9,14 +9,19 @@ app.use(express.static('public'));
 
 const DOWNLOADS_DIR = path.join(__dirname, 'downloads');
 
-const COOKIES_PATH = path.join(__dirname, 'cookies.txt');
+// Write cookies from env variable to a temp file if provided
+const COOKIES_PATH = path.join('/tmp', 'yt_cookies.txt');
+if (process.env.YT_COOKIES) {
+  fs.writeFileSync(COOKIES_PATH, process.env.YT_COOKIES, 'utf8');
+}
+
 const YTDLP_BASE_ARGS = [
   '--no-playlist',
   '--extractor-args', 'youtube:player_client=tv_embedded,ios,web',
   '--user-agent', 'com.google.ios.youtube/19.29.1 (iPhone16,2; U; CPU iOS 17_5_1 like Mac OS X;)',
   '--no-check-certificates',
   '--geo-bypass',
-  ...(fs.existsSync(COOKIES_PATH) ? ['--cookies', COOKIES_PATH] : []),
+  ...(process.env.YT_COOKIES ? ['--cookies', COOKIES_PATH] : []),
 ];
 
 app.post('/api/formats', (req, res) => {
