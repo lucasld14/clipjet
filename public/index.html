@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ClipJet</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green: #D5FF40;
+      --gray: #C0C2B8;
+      --white: #FFFFFF;
+      --bg: #111111;
+      --card: #1A1A1A;
+      --border: #2A2A2A;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg);
+      color: var(--white);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 20px;
+    }
+
+    /* ── Logo ── */
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+      background: var(--green);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-text {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: -0.5px;
+    }
+
+    .logo-text span { color: var(--green); }
+
+    .tagline {
+      font-size: 0.85rem;
+      color: var(--gray);
+      margin-bottom: 36px;
+      font-weight: 400;
+    }
+
+    /* ── Card ── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 36px;
+      width: 100%;
+      max-width: 560px;
+    }
+
+    /* ── Platform badges ── */
+    .platforms {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+
+    .platform {
+      background: #222;
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 4px 14px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--gray);
+      letter-spacing: 0.3px;
+    }
+
+    /* ── Input row ── */
+    .input-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--gray);
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      background: #111;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      padding: 13px 16px;
+      color: var(--white);
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input[type="text"]:focus { border-color: var(--green); }
+    input[type="text"]::placeholder { color: #555; }
+
+    .btn-fetch {
+      background: var(--green);
+      color: #111;
+      border: none;
+      border-radius: 12px;
+      padding: 13px 20px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+
+    .btn-fetch:hover { opacity: 0.9; transform: translateY(-1px); }
+    .btn-fetch:active { transform: translateY(0); }
+    .btn-fetch:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+    /* ── Video info ── */
+    #info { display: none; }
+
+    .video-meta {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      background: #111;
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 20px;
+    }
+
+    .video-meta img {
+      width: 110px;
+      border-radius: 10px;
+      flex-shrink: 0;
+      object-fit: cover;
+      aspect-ratio: 16/9;
+    }
+
+    .meta-text { flex: 1; min-width: 0; }
+
+    .vid-title {
+      font-weight: 600;
+      font-size: 0.88rem;
+      line-height: 1.45;
+      margin-bottom: 6px;
+      word-break: break-word;
+      color: var(--white);
+    }
+
+    .vid-duration {
+      font-size: 0.78rem;
+      color: var(--gray);
+      font-weight: 400;
+    }
+
+    /* ── Tabs ── */
+    .section-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--gray);
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 16px;
+      background: #111;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      padding: 4px;
+    }
+
+    .tab {
+      flex: 1;
+      border: none;
+      border-radius: 9px;
+      padding: 10px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--gray);
+      background: transparent;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tab.active {
+      background: var(--green);
+      color: #111;
+    }
+
+    /* ── Quality select ── */
+    #quality-row { margin-bottom: 20px; display: none; }
+
+    select {
+      width: 100%;
+      background: #111;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      padding: 13px 16px;
+      color: var(--white);
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.9rem;
+      outline: none;
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23C0C2B8' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+    }
+
+    /* ── Download button ── */
+    .btn-download {
+      width: 100%;
+      padding: 15px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 14px;
+      background: var(--green);
+      color: #111;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+      letter-spacing: 0.2px;
+    }
+
+    .btn-download:hover { opacity: 0.9; transform: translateY(-1px); }
+    .btn-download:active { transform: translateY(0); }
+    .btn-download:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+    /* ── Status ── */
+    #status {
+      margin-top: 16px;
+      font-size: 0.83rem;
+      color: var(--gray);
+      text-align: center;
+      min-height: 20px;
+    }
+
+    #status.error { color: #FF5F5F; }
+    #status.success { color: var(--green); }
+
+    .spinner {
+      display: inline-block;
+      width: 13px;
+      height: 13px;
+      border: 2px solid #333;
+      border-top-color: var(--green);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .footer {
+      margin-top: 28px;
+      font-size: 0.75rem;
+      color: #444;
+      text-align: center;
+    }
+
+    @media (max-width: 480px) {
+      .card { padding: 24px 20px; }
+      .input-row { flex-direction: column; }
+      .btn-fetch { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="logo">
+    <div class="logo-icon">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <path d="M4 10L9 5V8.5H16V11.5H9V15L4 10Z" fill="#111"/>
+      </svg>
+    </div>
+    <div class="logo-text">Clip<span>Jet</span></div>
+  </div>
+  <p class="tagline">Baixe vídeos de qualquer plataforma</p>
+
+  <div class="card">
+    <div class="platforms">
+      <span class="platform">YouTube</span>
+      <span class="platform">Facebook</span>
+      <span class="platform">TikTok</span>
+      <span class="platform">Kwai</span>
+    </div>
+
+    <p class="input-label">Link do vídeo</p>
+    <div class="input-row">
+      <input type="text" id="url" placeholder="Cole o link aqui..." />
+      <button class="btn-fetch" id="fetch-btn" onclick="fetchInfo()">Buscar</button>
+    </div>
+
+    <div id="info">
+      <div class="video-meta">
+        <img id="thumb" src="" alt="thumbnail" />
+        <div class="meta-text">
+          <div class="vid-title" id="vid-title"></div>
+          <div class="vid-duration" id="vid-duration"></div>
+        </div>
+      </div>
+
+      <p class="section-label">Formato</p>
+      <div class="tabs">
+        <button class="tab active" id="tab-mp4" onclick="setType('mp4')">Vídeo MP4</button>
+        <button class="tab" id="tab-mp3" onclick="setType('mp3')">Áudio MP3</button>
+      </div>
+
+      <div id="quality-row">
+        <select id="quality"></select>
+      </div>
+
+      <button class="btn-download" onclick="download()">Baixar</button>
+    </div>
+
+    <div id="status"></div>
+  </div>
+
+  <p class="footer">Roda localmente no seu PC · Nenhum dado enviado para servidores externos</p>
+
+  <script>
+    let currentType = 'mp4';
+
+    function setStatus(msg, cls = '') {
+      const el = document.getElementById('status');
+      el.innerHTML = msg;
+      el.className = cls;
+    }
+
+    function setType(type) {
+      currentType = type;
+      document.getElementById('tab-mp4').classList.toggle('active', type === 'mp4');
+      document.getElementById('tab-mp3').classList.toggle('active', type === 'mp3');
+      document.getElementById('quality-row').style.display = type === 'mp4' ? 'block' : 'none';
+    }
+
+    async function fetchInfo() {
+      const url = document.getElementById('url').value.trim();
+      if (!url) return setStatus('Cole uma URL válida.', 'error');
+
+      document.getElementById('fetch-btn').disabled = true;
+      document.getElementById('info').style.display = 'none';
+      setStatus('<span class="spinner"></span>Buscando informações...');
+
+      try {
+        const res = await fetch('/api/formats', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+
+        document.getElementById('thumb').src = data.thumbnail || '';
+        document.getElementById('vid-title').textContent = data.title || 'Sem título';
+        document.getElementById('vid-duration').textContent = data.duration ? '⏱ ' + data.duration : '';
+
+        const sel = document.getElementById('quality');
+        const formats = data.formats || [];
+        sel.innerHTML = formats.length
+          ? formats.map(f => `<option value="${f.id}">${f.label}</option>`).join('')
+          : '<option value="best">Melhor qualidade disponível</option>';
+
+        document.getElementById('info').style.display = 'block';
+        setType('mp4');
+        setStatus('');
+      } catch (e) {
+        setStatus(e.message || 'Não foi possível obter informações do vídeo.', 'error');
+      } finally {
+        document.getElementById('fetch-btn').disabled = false;
+      }
+    }
+
+    async function download() {
+      const url = document.getElementById('url').value.trim();
+      const format = document.getElementById('quality').value || 'best';
+      const btn = document.querySelector('.btn-download');
+
+      btn.disabled = true;
+      setStatus('<span class="spinner"></span>Processando download, aguarde...');
+
+      try {
+        const res = await fetch('/api/download', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url, format, type: currentType })
+        });
+
+        if (!res.ok) {
+          const err = await res.json();
+          throw new Error(err.error);
+        }
+
+        const blob = await res.blob();
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = currentType === 'mp3' ? 'audio.mp3' : 'video.mp4';
+        a.click();
+        URL.revokeObjectURL(a.href);
+        setStatus('Download concluído!', 'success');
+      } catch (e) {
+        setStatus(e.message || 'Erro no download.', 'error');
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    document.getElementById('url').addEventListener('keydown', e => {
+      if (e.key === 'Enter') fetchInfo();
+    });
+  </script>
+</body>
+</html>
