@@ -22,8 +22,8 @@ if (process.env.YT_COOKIES) {
 
 const YTDLP_BASE_ARGS = [
   '--no-playlist',
-  '--extractor-args', 'youtube:player_client=tv_embedded,ios,web',
-  '--user-agent', 'com.google.ios.youtube/19.29.1 (iPhone16,2; U; CPU iOS 17_5_1 like Mac OS X;)',
+  '--extractor-args', 'youtube:player_client=android,tv_embedded',
+  '--user-agent', 'com.google.android.youtube/17.36.4 (Linux; U; Android 12; GB) gzip',
   '--no-check-certificates',
   '--geo-bypass',
   ...(process.env.YT_COOKIES ? ['--cookies', COOKIES_PATH] : []),
