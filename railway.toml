@@ -1,8 +1,6 @@
 [build]
-builder = "nixpacks"
-buildCommand = "bash install-deps.sh && npm install"
+builder = "dockerfile"
 
 [deploy]
-startCommand = "node server.js"
 healthcheckPath = "/"
 restartPolicyType = "on_failure"
