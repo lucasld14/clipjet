@@ -9,10 +9,15 @@ app.use(express.static('public'));
 
 const DOWNLOADS_DIR = path.join(__dirname, 'downloads');
 
-// Write cookies from env variable to a temp file if provided
+// Write cookies from env variable (base64 encoded) to a temp file
 const COOKIES_PATH = path.join('/tmp', 'yt_cookies.txt');
 if (process.env.YT_COOKIES) {
-  fs.writeFileSync(COOKIES_PATH, process.env.YT_COOKIES, 'utf8');
+  try {
+    const decoded = Buffer.from(process.env.YT_COOKIES, 'base64').toString('utf8');
+    fs.writeFileSync(COOKIES_PATH, decoded, 'utf8');
+  } catch {
+    fs.writeFileSync(COOKIES_PATH, process.env.YT_COOKIES, 'utf8');
+  }
 }
 
 const YTDLP_BASE_ARGS = [
