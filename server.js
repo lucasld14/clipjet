@@ -39,7 +39,7 @@ app.post('/api/formats', (req, res) => {
   ytdlp.on('close', code => {
     if (code !== 0) {
       console.error('yt-dlp error:', error);
-      return res.status(400).json({ error: 'Não foi possível obter informações do vídeo. Verifique a URL.' });
+      return res.status(400).json({ error: error.slice(-300) || 'Não foi possível obter informações do vídeo.' });
     }
     try {
       const info = JSON.parse(data);
