@@ -13,10 +13,10 @@ const DOWNLOADS_DIR = path.join(__dirname, 'downloads');
 const COOKIES_PATH = path.join('/tmp', 'yt_cookies.txt');
 if (process.env.YT_COOKIES) {
   try {
-    const decoded = Buffer.from(process.env.YT_COOKIES, 'base64').toString('utf8');
+    const decoded = Buffer.from(process.env.YT_COOKIES, 'base64').toString('utf8').replace(/^﻿/, '');
     fs.writeFileSync(COOKIES_PATH, decoded, 'utf8');
   } catch {
-    fs.writeFileSync(COOKIES_PATH, process.env.YT_COOKIES, 'utf8');
+    fs.writeFileSync(COOKIES_PATH, process.env.YT_COOKIES.replace(/^﻿/, ''), 'utf8');
   }
 }
 
