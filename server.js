@@ -9,16 +9,18 @@ app.use(express.static('public'));
 
 const DOWNLOADS_DIR = path.join(__dirname, 'downloads');
 
-// Get available formats for a URL
+const YTDLP_BASE_ARGS = [
+  '--no-playlist',
+  '--extractor-args', 'youtube:player_client=web,mweb',
+  '--user-agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+  '--no-check-certificates',
+];
+
 app.post('/api/formats', (req, res) => {
   const { url } = req.body;
   if (!url) return res.status(400).json({ error: 'URL obrigatória' });
 
-  const ytdlp = spawn('yt-dlp', [
-    '--dump-json',
-    '--no-playlist',
-    url
-  ]);
+  const ytdlp = spawn('yt-dlp', ['--dump-json', ...YTDLP_BASE_ARGS, url]);
 
   let data = '';
   let error = '';
@@ -28,6 +30,7 @@ app.post('/api/formats', (req, res) => {
 
   ytdlp.on('close', code => {
     if (code !== 0) {
+      console.error('yt-dlp error:', error);
       return res.status(400).json({ error: 'Não foi possível obter informações do vídeo. Verifique a URL.' });
     }
     try {
@@ -50,7 +53,6 @@ app.post('/api/formats', (req, res) => {
   });
 });
 
-// Download endpoint — streams the file directly to the browser
 app.post('/api/download', (req, res) => {
   const { url, format, type } = req.body;
   if (!url) return res.status(400).json({ error: 'URL obrigatória' });
@@ -59,18 +61,19 @@ app.post('/api/download', (req, res) => {
   const filename = `download_${Date.now()}.${isAudio ? 'mp3' : 'mp4'}`;
   const outputPath = path.join(DOWNLOADS_DIR, filename);
 
-  const args = isAudio
-    ? ['-x', '--audio-format', 'mp3', '--audio-quality', '0', '-o', outputPath, '--no-playlist', url]
-    : ['-f', format || 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best', '--merge-output-format', 'mp4', '-o', outputPath, '--no-playlist', url];
+  const formatArgs = isAudio
+    ? ['-x', '--audio-format', 'mp3', '--audio-quality', '0']
+    : ['-f', format || 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best', '--merge-output-format', 'mp4'];
 
-  const ytdlp = spawn('yt-dlp', args);
+  const ytdlp = spawn('yt-dlp', [...formatArgs, ...YTDLP_BASE_ARGS, '-o', outputPath, url]);
 
   let error = '';
   ytdlp.stderr.on('data', chunk => { error += chunk; });
 
   ytdlp.on('close', code => {
     if (code !== 0 || !fs.existsSync(outputPath)) {
-      return res.status(500).json({ error: 'Falha no download. ' + error.slice(0, 200) });
+      console.error('yt-dlp download error:', error);
+      return res.status(500).json({ error: 'Falha no download. ' + error.slice(0, 300) });
     }
 
     const stat = fs.statSync(outputPath);
